@@ -1,26 +1,26 @@
-# Postman Collection Testing Guide
+# Panduan Testing Postman Collection
 
 Panduan lengkap untuk menggunakan Postman Collection SIMS PPOB API dengan fitur automated testing.
 
 ## 📋 Fitur Unggulan
 
-### ✨ Random Email Generation
+### ✨ Generasi Email Acak
 - Setiap test run menggunakan email unique yang di-generate otomatis
 - Format: `user{timestamp}{randomNum}@nutech-integrasi.com`
 - Tidak perlu manual edit email setiap kali testing
 - Bisa run collection berkali-kali tanpa conflict
 
-### 🔄 Automated Token Management
+### 🔄 Manajemen Token Otomatis
 - Token dari login otomatis tersimpan sebagai collection variable
 - Semua request setelah login otomatis menggunakan token ini
 - Tidak perlu copy-paste token manual
 
-### ✅ Built-in Test Assertions
+### ✅ Test Assertions Bawaan
 - Setiap endpoint memiliki test assertions
 - Verifikasi status code, response structure, dan data
 - Real-time test results di Postman UI
 
-## 🚀 Quick Start
+## 🚀 Memulai Cepat
 
 ### 1. Import Collection
 
@@ -42,7 +42,7 @@ Panduan lengkap untuk menggunakan Postman Collection SIMS PPOB API dengan fitur 
 
 **⚠️ Important:** Untuk testing **Update Profile Image** endpoint, Anda perlu **manually select file** `testphoto.jpg` di Postman (lihat detail di Test Coverage section). File tidak bisa auto-attach karena limitasi Postman.
 
-### 3. Run Individual Request
+### 3. Jalankan Request Individual
 
 **Manual Testing:**
 ```bash
@@ -54,7 +54,7 @@ Panduan lengkap untuk menggunakan Postman Collection SIMS PPOB API dengan fitur 
 6. Lanjut ke "Login" - akan menggunakan email yang sama
 ```
 
-### 4. Run Collection Runner
+### 4. Jalankan Collection Runner
 
 **Automated Testing Semua Endpoint:**
 ```bash

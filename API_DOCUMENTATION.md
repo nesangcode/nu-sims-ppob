@@ -1,13 +1,13 @@
-# API Documentation - SIMS PPOB
+# Dokumentasi API - SIMS PPOB
 
 Dokumentasi lengkap untuk semua endpoints API SIMS PPOB.
 
-## Table of Contents
+## Daftar Isi
 
-1. [Overview](#overview)
-2. [Authentication](#authentication)
-3. [Response Format](#response-format)
-4. [Error Codes](#error-codes)
+1. [Ringkasan](#ringkasan)
+2. [Autentikasi](#autentikasi)
+3. [Format Response](#format-response)
+4. [Kode Error](#kode-error)
 5. [Endpoints](#endpoints)
    - [Module Membership](#module-membership)
    - [Module Information](#module-information)
@@ -15,19 +15,19 @@ Dokumentasi lengkap untuk semua endpoints API SIMS PPOB.
 
 ---
 
-## Overview
+## Ringkasan
 
 **Base URL:** `http://localhost:3000` (development)
 
 **Content-Type:** `application/json`
 
-**Authentication:** JWT Bearer Token (untuk protected endpoints)
+**Autentikasi:** JWT Bearer Token (untuk protected endpoints)
 
 ---
 
-## Authentication
+## Autentikasi
 
-Endpoints yang memerlukan authentication harus menyertakan JWT token di header:
+Endpoints yang memerlukan autentikasi harus menyertakan JWT token di header:
 
 ```http
 Authorization: Bearer <your_jwt_token>
@@ -37,11 +37,11 @@ Token didapat dari endpoint `/login` dan berlaku selama 12 jam.
 
 ---
 
-## Response Format
+## Format Response
 
 Semua response menggunakan format JSON standar:
 
-### Success Response
+### Response Sukses
 
 ```json
 {
@@ -53,7 +53,7 @@ Semua response menggunakan format JSON standar:
 }
 ```
 
-### Error Response
+### Response Error
 
 ```json
 {
@@ -65,15 +65,15 @@ Semua response menggunakan format JSON standar:
 
 ---
 
-## Error Codes
+## Kode Error
 
-| Status Code | HTTP Status | Description |
+| Kode Status | HTTP Status | Deskripsi |
 |------------|-------------|-------------|
-| 0 | 200 | Success |
-| 102 | 400 | Bad Request / Validation Error |
-| 103 | 401 | Authentication Failed (Login) |
-| 108 | 401 | Unauthorized / Token Invalid |
-| 404 | 404 | Resource Not Found |
+| 0 | 200 | Sukses |
+| 102 | 400 | Bad Request / Error Validasi |
+| 103 | 401 | Autentikasi Gagal (Login) |
+| 108 | 401 | Tidak Diotorisasi / Token Tidak Valid |
+| 404 | 404 | Resource Tidak Ditemukan |
 | 500 | 500 | Internal Server Error |
 
 ---
@@ -90,7 +90,7 @@ Mendaftarkan user baru ke sistem.
 
 **Endpoint:** `POST /registration`
 
-**Authentication:** No
+**Autentikasi:** Tidak
 
 **Request Body:**
 
@@ -103,7 +103,7 @@ Mendaftarkan user baru ke sistem.
 }
 ```
 
-**Field Validations:**
+**Validasi Field:**
 
 | Field | Type | Required | Validation |
 |-------|------|----------|------------|
@@ -112,7 +112,7 @@ Mendaftarkan user baru ke sistem.
 | last_name | string | Yes | Not empty |
 | password | string | Yes | Minimum 8 characters |
 
-**Success Response (200):**
+**Response Sukses (200):**
 
 ```json
 {
@@ -122,7 +122,7 @@ Mendaftarkan user baru ke sistem.
 }
 ```
 
-**Error Responses:**
+**Response Error:**
 
 **Email sudah terdaftar (400):**
 ```json
@@ -159,7 +159,7 @@ Login user dan mendapatkan JWT token.
 
 **Endpoint:** `POST /login`
 
-**Authentication:** No
+**Autentikasi:** Tidak
 
 **Request Body:**
 
@@ -170,14 +170,14 @@ Login user dan mendapatkan JWT token.
 }
 ```
 
-**Field Validations:**
+**Validasi Field:**
 
 | Field | Type | Required | Validation |
 |-------|------|----------|------------|
 | email | string | Yes | Valid email format |
 | password | string | Yes | Not empty |
 
-**Success Response (200):**
+**Response Sukses (200):**
 
 ```json
 {
@@ -208,7 +208,7 @@ Mendapatkan informasi profile user yang sedang login.
 
 **Endpoint:** `GET /profile`
 
-**Authentication:** Yes (Bearer Token)
+**Autentikasi:** Ya (Bearer Token)
 
 **Request Headers:**
 
@@ -216,7 +216,7 @@ Mendapatkan informasi profile user yang sedang login.
 Authorization: Bearer <token>
 ```
 
-**Success Response (200):**
+**Response Sukses (200):**
 
 ```json
 {
@@ -231,7 +231,7 @@ Authorization: Bearer <token>
 }
 ```
 
-**Notes:**
+**Catatan:**
 - `profile_image` bisa `null` jika user belum upload foto
 
 **Error Response:**
@@ -253,7 +253,7 @@ Update informasi profile user (first_name dan last_name).
 
 **Endpoint:** `PUT /profile/update`
 
-**Authentication:** Yes (Bearer Token)
+**Autentikasi:** Ya (Bearer Token)
 
 **Request Headers:**
 
@@ -271,14 +271,14 @@ Content-Type: application/json
 }
 ```
 
-**Field Validations:**
+**Validasi Field:**
 
 | Field | Type | Required | Validation |
 |-------|------|----------|------------|
 | first_name | string | Yes | Not empty |
 | last_name | string | Yes | Not empty |
 
-**Success Response (200):**
+**Response Sukses (200):**
 
 ```json
 {
@@ -312,7 +312,7 @@ Upload dan update foto profile user.
 
 **Endpoint:** `PUT /profile/image`
 
-**Authentication:** Yes (Bearer Token)
+**Autentikasi:** Ya (Bearer Token)
 
 **Request Headers:**
 
@@ -331,7 +331,7 @@ Content-Type: multipart/form-data
 - Format: jpeg, jpg, png only
 - Max size: 5MB
 
-**Success Response (200):**
+**Response Sukses (200):**
 
 ```json
 {
@@ -346,7 +346,7 @@ Content-Type: multipart/form-data
 }
 ```
 
-**Error Responses:**
+**Response Error:**
 
 **Format tidak sesuai (400):**
 ```json
@@ -376,9 +376,9 @@ Mendapatkan list banner yang tersedia.
 
 **Endpoint:** `GET /banner`
 
-**Authentication:** No
+**Autentikasi:** Tidak
 
-**Success Response (200):**
+**Response Sukses (200):**
 
 ```json
 {
@@ -399,7 +399,7 @@ Mendapatkan list banner yang tersedia.
 }
 ```
 
-**Notes:**
+**Catatan:**
 - Endpoint ini public, tidak perlu authentication
 - Banner diurutkan berdasarkan ID ascending
 
@@ -411,7 +411,7 @@ Mendapatkan list layanan/service yang tersedia.
 
 **Endpoint:** `GET /services`
 
-**Authentication:** Yes (Bearer Token)
+**Autentikasi:** Ya (Bearer Token)
 
 **Request Headers:**
 
@@ -419,7 +419,7 @@ Mendapatkan list layanan/service yang tersedia.
 Authorization: Bearer <token>
 ```
 
-**Success Response (200):**
+**Response Sukses (200):**
 
 ```json
 {
@@ -448,7 +448,7 @@ Authorization: Bearer <token>
 }
 ```
 
-**Notes:**
+**Catatan:**
 - Service code digunakan untuk melakukan transaksi
 - Service tariff dalam satuan Rupiah
 
@@ -462,7 +462,7 @@ Mendapatkan balance/saldo user.
 
 **Endpoint:** `GET /balance`
 
-**Authentication:** Yes (Bearer Token)
+**Autentikasi:** Ya (Bearer Token)
 
 **Request Headers:**
 
@@ -470,7 +470,7 @@ Mendapatkan balance/saldo user.
 Authorization: Bearer <token>
 ```
 
-**Success Response (200):**
+**Response Sukses (200):**
 
 ```json
 {
@@ -482,7 +482,7 @@ Authorization: Bearer <token>
 }
 ```
 
-**Notes:**
+**Catatan:**
 - Balance dalam satuan Rupiah
 - Balance tidak bisa negatif
 
@@ -505,7 +505,7 @@ Menambah saldo user.
 
 **Endpoint:** `POST /topup`
 
-**Authentication:** Yes (Bearer Token)
+**Autentikasi:** Ya (Bearer Token)
 
 **Request Headers:**
 
@@ -522,13 +522,13 @@ Content-Type: application/json
 }
 ```
 
-**Field Validations:**
+**Validasi Field:**
 
 | Field | Type | Required | Validation |
 |-------|------|----------|------------|
 | top_up_amount | number | Yes | Must be positive number |
 
-**Success Response (200):**
+**Response Sukses (200):**
 
 ```json
 {
@@ -540,11 +540,11 @@ Content-Type: application/json
 }
 ```
 
-**Notes:**
+**Catatan:**
 - Response mengembalikan balance terbaru setelah topup
 - Transaksi topup akan tercatat di transaction history
 
-**Error Responses:**
+**Response Error:**
 
 **Invalid amount (400):**
 ```json
@@ -572,7 +572,7 @@ Melakukan pembayaran untuk service tertentu.
 
 **Endpoint:** `POST /transaction`
 
-**Authentication:** Yes (Bearer Token)
+**Autentikasi:** Ya (Bearer Token)
 
 **Request Headers:**
 
@@ -589,13 +589,13 @@ Content-Type: application/json
 }
 ```
 
-**Field Validations:**
+**Validasi Field:**
 
 | Field | Type | Required | Validation |
 |-------|------|----------|------------|
 | service_code | string | Yes | Must be valid service code |
 
-**Success Response (200):**
+**Response Sukses (200):**
 
 ```json
 {
@@ -612,13 +612,13 @@ Content-Type: application/json
 }
 ```
 
-**Notes:**
+**Catatan:**
 - Service code harus valid (ada di list services)
 - Saldo harus mencukupi untuk melakukan transaksi
 - Invoice number di-generate otomatis dengan format: `INV{DD}{MM}{YYYY}-{RANDOM}`
 - Saldo akan berkurang otomatis sesuai service tariff
 
-**Error Responses:**
+**Response Error:**
 
 **Service tidak ditemukan (400):**
 ```json
@@ -646,7 +646,7 @@ Mendapatkan history transaksi user.
 
 **Endpoint:** `GET /transaction/history`
 
-**Authentication:** Yes (Bearer Token)
+**Autentikasi:** Ya (Bearer Token)
 
 **Request Headers:**
 
@@ -674,7 +674,7 @@ GET /transaction/history?offset=0&limit=3
 GET /transaction/history?offset=3&limit=3
 ```
 
-**Success Response (200):**
+**Response Sukses (200):**
 
 ```json
 {
@@ -710,7 +710,7 @@ GET /transaction/history?offset=3&limit=3
 }
 ```
 
-**Notes:**
+**Catatan:**
 - History diurutkan dari yang terbaru (DESC by created_on)
 - Transaction type: `TOPUP` untuk top up, `PAYMENT` untuk pembayaran
 - Description: nama service untuk PAYMENT, "Top Up balance" untuk TOPUP
@@ -718,9 +718,9 @@ GET /transaction/history?offset=3&limit=3
 
 ---
 
-## Testing Examples
+## Contoh Testing
 
-### Using cURL
+### Menggunakan cURL
 
 **1. Register:**
 ```bash
@@ -786,7 +786,7 @@ curl -X GET "http://localhost:3000/transaction/history?offset=0&limit=5" \
 
 ## Rate Limiting
 
-Untuk production, disarankan implement rate limiting:
+Untuk production, disarankan implementasikan rate limiting:
 
 - Registration: 5 requests / 15 minutes per IP
 - Login: 5 requests / 15 minutes per IP
@@ -794,7 +794,7 @@ Untuk production, disarankan implement rate limiting:
 
 ---
 
-## Best Practices
+## Praktik Terbaik
 
 1. **Selalu validate token** sebelum mengakses protected endpoints
 2. **Store token securely** di client (e.g., httpOnly cookie, secure storage)
@@ -805,11 +805,11 @@ Untuk production, disarankan implement rate limiting:
 
 ---
 
-## Support
+## Dukungan
 
 Untuk pertanyaan atau issue terkait API, silakan hubungi tim development atau buat issue di repository.
 
 ---
 
-**Last Updated:** 2024
-**API Version:** 1.0.0
+**Terakhir Diperbarui:** 2024
+**Versi API:** 1.0.0

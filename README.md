@@ -4,9 +4,9 @@ REST API untuk aplikasi SIMS PPOB (Pulsa, Paket Data, dan Pembayaran Online) men
 
 ## 📑 Table of Contents
 
-- [Fitur](#fitur)
+- [Features](#features)
 - [Prerequisites](#prerequisites)
-- [Instalasi](#instalasi)
+- [Installation](#installation)
 - [API Documentation](#api-documentation)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
@@ -20,25 +20,25 @@ REST API untuk aplikasi SIMS PPOB (Pulsa, Paket Data, dan Pembayaran Online) men
 
 ---
 
-## Fitur
+## Features
 
-- **Module Membership**: Registrasi, Login, Profile Management
-- **Module Information**: Banner dan Services
+- **Module Membership**: Registration, Login, Profile Management
+- **Module Information**: Banners and Services
 - **Module Transaction**: Balance, Top Up, Payment, Transaction History
 - **Security**: JWT Authentication, Password Hashing (bcrypt)
-- **Database**: MySQL dengan Raw Query & Prepared Statements
-- **Validation**: Input validation menggunakan express-validator
+- **Database**: MySQL with Raw Query & Prepared Statements
+- **Validation**: Input validation using express-validator
 - **Error Handling**: Centralized error handling
-- **File Upload**: Profile image upload dengan validasi
+- **File Upload**: Profile image upload with validation
 - **Swagger UI**: Interactive API documentation
 
 ## Prerequisites
 
-- Node.js (v14 atau lebih tinggi)
-- MySQL (v5.7 atau lebih tinggi)
-- npm atau yarn
+- Node.js (v14 or higher)
+- MySQL (v5.7 or higher)
+- npm or yarn
 
-## Instalasi
+## Installation
 
 ### 1. Clone Repository
 
@@ -55,23 +55,23 @@ npm install
 
 ### 3. Setup Database
 
-Buat database MySQL dan import schema:
+Create MySQL database and import schema:
 
 ```bash
 mysql -u root -p < database/schema.sql
 ```
 
-Atau jalankan query SQL di `database/schema.sql` secara manual.
+Or run SQL queries in `database/schema.sql` manually.
 
-### 4. Konfigurasi Environment
+### 4. Environment Configuration
 
-Copy file `.env.example` menjadi `.env`:
+Copy `.env.example` file to `.env`:
 
 ```bash
 cp .env.example .env
 ```
 
-Edit file `.env` sesuai konfigurasi Anda:
+Edit `.env` file according to your configuration:
 
 ```env
 PORT=3000
@@ -87,9 +87,9 @@ JWT_SECRET=your-super-secret-jwt-key
 APP_URL=http://localhost:3000
 ```
 
-### 5. Jalankan Aplikasi
+### 5. Run Application
 
-**Development Mode (dengan auto-reload):**
+**Development Mode (with auto-reload):**
 ```bash
 npm run dev
 ```
@@ -99,21 +99,21 @@ npm run dev
 npm start
 ```
 
-Server akan berjalan di `http://localhost:3000`
+Server will run at `http://localhost:3000`
 
-### 6. Akses Swagger UI
+### 6. Access Swagger UI
 
-Setelah server running, buka browser dan akses:
+After server is running, open browser and access:
 
 ```
 http://localhost:3000/api-docs
 ```
 
-Swagger UI menyediakan:
-- Dokumentasi lengkap semua endpoints
-- Interface untuk testing API langsung dari browser
-- Schema request/response yang jelas
-- Fitur authorization untuk protected endpoints
+Swagger UI provides:
+- Complete documentation of all endpoints
+- Interface for testing API directly from browser
+- Clear request/response schemas
+- Authorization feature for protected endpoints
 - **Dynamic server selection** - switches between local and production environments
 
 **Server Configuration:**
@@ -133,7 +133,7 @@ http://localhost:3000
 
 ### Response Format
 
-Semua response menggunakan format JSON standar:
+All responses use standard JSON format:
 
 ```json
 {
@@ -167,7 +167,7 @@ Status Codes:
 }
 ```
 
-**Response Success (200):**
+**Response Sukses (200):**
 ```json
 {
   "status": 0,
@@ -188,7 +188,7 @@ Status Codes:
 }
 ```
 
-**Response Success (200):**
+**Response Sukses (200):**
 ```json
 {
   "status": 0,
@@ -208,7 +208,7 @@ Status Codes:
 Authorization: Bearer <token>
 ```
 
-**Response Success (200):**
+**Response Sukses (200):**
 ```json
 {
   "status": 0,
@@ -239,7 +239,7 @@ Authorization: Bearer <token>
 }
 ```
 
-**Response Success (200):**
+**Response Sukses (200):**
 ```json
 {
   "status": 0,
@@ -268,7 +268,7 @@ Content-Type: multipart/form-data
 file: <image file> (jpeg, jpg, png)
 ```
 
-**Response Success (200):**
+**Response Sukses (200):**
 ```json
 {
   "status": 0,
@@ -290,7 +290,7 @@ file: <image file> (jpeg, jpg, png)
 
 **Endpoint:** `GET /banner`
 
-**Response Success (200):**
+**Response Sukses (200):**
 ```json
 {
   "status": 0,
@@ -314,7 +314,7 @@ file: <image file> (jpeg, jpg, png)
 Authorization: Bearer <token>
 ```
 
-**Response Success (200):**
+**Response Sukses (200):**
 ```json
 {
   "status": 0,
@@ -343,7 +343,7 @@ Authorization: Bearer <token>
 Authorization: Bearer <token>
 ```
 
-**Response Success (200):**
+**Response Sukses (200):**
 ```json
 {
   "status": 0,
@@ -370,7 +370,7 @@ Authorization: Bearer <token>
 }
 ```
 
-**Response Success (200):**
+**Response Sukses (200):**
 ```json
 {
   "status": 0,
@@ -397,7 +397,7 @@ Authorization: Bearer <token>
 }
 ```
 
-**Response Success (200):**
+**Response Sukses (200):**
 ```json
 {
   "status": 0,
@@ -422,13 +422,13 @@ Authorization: Bearer <token>
 Authorization: Bearer <token>
 ```
 
-**Query Parameters:**
+**Parameter Query:**
 - `offset` (optional): Starting position (default: 0)
 - `limit` (optional): Number of records (default: all)
 
-**Example:** `GET /transaction/history?offset=0&limit=3`
+**Contoh:** `GET /transaction/history?offset=0&limit=3`
 
-**Response Success (200):**
+**Response Sukses (200):**
 ```json
 {
   "status": 0,
@@ -485,20 +485,16 @@ nu-sims-ppob/
 
 ## Deployment
 
-Netlify mendukung deployment untuk frontend, namun untuk backend API Node.js, Anda perlu menggunakan **Netlify Functions** (serverless functions). Berikut adalah langkah-langkahnya:
-
-### Persiapan Deploy
-
-**Catatan Penting:** Deployment API Node.js ke Netlify memerlukan penyesuaian karena Netlify lebih cocok untuk static sites dan serverless functions. Untuk production, disarankan menggunakan platform seperti:
+Untuk backend API Node.js, disarankan menggunakan platform berikut:
 - **Railway** (Recommended)
 - **Heroku**
 - **DigitalOcean App Platform**
 - **AWS EC2/Elastic Beanstalk**
 - **Google Cloud Run**
 
-### Alternative 1: Deploy ke Railway (Recommended)
+### Alternative 1: Deploy to Railway (Recommended)
 
-Railway adalah platform yang sangat mudah untuk deploy Node.js API.
+Railway is a very easy platform for deploying Node.js API.
 
 #### Langkah-langkah:
 
@@ -550,7 +546,7 @@ Railway adalah platform yang sangat mudah untuk deploy Node.js API.
 7. **Domain**
    Railway akan memberikan domain otomatis: `https://your-app.up.railway.app`
 
-### Alternative 2: Deploy ke Heroku
+### Alternative 2: Deploy to Heroku
 
 #### Langkah-langkah:
 
@@ -591,7 +587,7 @@ Railway adalah platform yang sangat mudah untuk deploy Node.js API.
    # Kemudian jalankan SQL schema
    ```
 
-### Alternative 3: Deploy ke DigitalOcean App Platform
+### Alternative 3: Deploy to DigitalOcean App Platform
 
 1. **Buat akun di DigitalOcean**
 2. **Buat App dari GitHub repository**
@@ -666,7 +662,7 @@ curl -X POST http://localhost:3000/login \
 - Error handling yang proper
 - CORS configuration
 
-**Recommended untuk Production:**
+**Recommended for Production:**
 - Rate limiting (gunakan `express-rate-limit`)
 - Helmet.js untuk security headers
 - HTTPS/SSL certificate
@@ -680,7 +676,7 @@ curl -X POST http://localhost:3000/login \
 
 ## Error Handling
 
-API menggunakan centralized error handling dengan response format standar:
+API uses centralized error handling with standard response format:
 
 **Validation Error (400):**
 ```json
@@ -724,17 +720,17 @@ API menggunakan centralized error handling dengan response format standar:
 
 ### Tables:
 
-1. **users**: Menyimpan data user
-2. **balances**: Menyimpan saldo user (one-to-one dengan users)
-3. **services**: Menyimpan layanan yang tersedia
-4. **banners**: Menyimpan banner informasi
-5. **transactions**: Menyimpan history transaksi
+1. **users**: Stores user data
+2. **balances**: Stores user balance (one-to-one with users)
+3. **services**: Stores available services
+4. **banners**: Stores banner information
+5. **transactions**: Stores transaction history
 
 ### Key Features:
 - Foreign key constraints
-- Indexes pada kolom yang sering di-query
-- Prepared statements untuk security
-- Transaction dengan FOR UPDATE untuk race condition prevention
+- Indexes on frequently queried columns
+- Prepared statements for security
+- Transactions with FOR UPDATE for race condition prevention
 
 ---
 
@@ -758,12 +754,12 @@ This application is a **proof-of-concept/take-home test implementation**. Below 
 **Manual File Selection Required for Image Upload:**
 - The "Update Profile Image" endpoint requires **manual file selection** in Postman
 - Postman collections cannot auto-attach files due to security restrictions
-- **Workaround**: Manually select `testphoto.jpg` before sending request
+- **Workaround:** Manually select `testphoto.jpg` before sending request
   1. Open "Update Profile Image" request
   2. Go to Body → form-data
   3. Click "Select Files" for the `file` key
   4. Select `testphoto.jpg` from repository root
-- **Error if not done**: `"Format Image tidak sesuai"` (Status 102)
+- **Error if not done:** `"Format Image tidak sesuai"` (Status 102)
 
 ### 🔸 Database
 
@@ -925,10 +921,10 @@ For production deployment, consider:
 ## Contributing
 
 1. Fork repository
-2. Buat branch baru (`git checkout -b feature/AmazingFeature`)
+2. Create new branch (`git checkout -b feature/AmazingFeature`)
 3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push ke branch (`git push origin feature/AmazingFeature`)
-5. Buat Pull Request
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Create Pull Request
 
 ---
 
@@ -946,7 +942,7 @@ This project is licensed under the ISC License.
 
 ## Support
 
-Jika ada pertanyaan atau issue, silakan buat issue di repository ini.
+If you have any questions or issues, please create an issue in this repository.
 
 ---
 
