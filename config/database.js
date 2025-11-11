@@ -3,10 +3,11 @@ require('dotenv').config();
 
 // Buat connection pool untuk performa yang lebih baik
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'sims_ppob',
+  host: process.env.MYSQLHOST || process.env.DB_HOST || 'localhost',
+  port: process.env.MYSQLPORT || 3306,
+  user: process.env.MYSQLUSER || process.env.DB_USER || 'root',
+  password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || '',
+  database: process.env.MYSQLDATABASE || process.env.DB_NAME || 'sims_ppob',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
