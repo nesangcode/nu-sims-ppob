@@ -2,6 +2,24 @@
 
 REST API untuk aplikasi SIMS PPOB (Pulsa, Paket Data, dan Pembayaran Online) menggunakan ExpressJS dengan implementasi raw query dan prepared statements.
 
+## 📑 Table of Contents
+
+- [Fitur](#fitur)
+- [Prerequisites](#prerequisites)
+- [Instalasi](#instalasi)
+- [API Documentation](#api-documentation)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Deployment](#deployment)
+- [Testing API](#testing-api)
+- [Security Best Practices](#security-best-practices)
+- [Database Schema](#database-schema)
+- [Limitations & Known Issues](#limitations--known-issues)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
 ## Fitur
 
 - **Module Membership**: Registrasi, Login, Profile Management
@@ -96,6 +114,15 @@ Swagger UI menyediakan:
 - Interface untuk testing API langsung dari browser
 - Schema request/response yang jelas
 - Fitur authorization untuk protected endpoints
+- **Dynamic server selection** - switches between local and production environments
+
+**Server Configuration:**
+- Swagger automatically shows available servers based on `APP_URL` environment variable
+- **Local development:** Shows `http://localhost:3000`
+- **Production deployment:** Shows both localhost and your production URL (e.g., Railway)
+- Use the server dropdown in Swagger UI to switch between environments
+
+📖 **Setup Guide:** [SWAGGER_SETUP.md](./SWAGGER_SETUP.md) - Complete instructions for configuring production URL
 
 ## API Documentation
 
@@ -708,6 +735,190 @@ API menggunakan centralized error handling dengan response format standar:
 - Indexes pada kolom yang sering di-query
 - Prepared statements untuk security
 - Transaction dengan FOR UPDATE untuk race condition prevention
+
+---
+
+## Limitations & Known Issues
+
+This application is a **proof-of-concept/take-home test implementation**. Below are documented limitations and areas for improvement before production deployment.
+
+### ⚡ Quick Overview
+
+| Category | Key Limitations |
+|----------|----------------|
+| **Postman** | Manual file selection required for image upload |
+| **Database** | No migration system, separate schemas for local/Railway |
+| **Security** | No rate limiting, token refresh, or 2FA |
+| **Performance** | No caching, single-instance only, local file storage |
+| **Testing** | No unit/integration tests, only Postman collection |
+| **Monitoring** | Basic console logging only, no APM or error tracking |
+
+### 🔸 Postman Testing
+
+**Manual File Selection Required for Image Upload:**
+- The "Update Profile Image" endpoint requires **manual file selection** in Postman
+- Postman collections cannot auto-attach files due to security restrictions
+- **Workaround**: Manually select `testphoto.jpg` before sending request
+  1. Open "Update Profile Image" request
+  2. Go to Body → form-data
+  3. Click "Select Files" for the `file` key
+  4. Select `testphoto.jpg` from repository root
+- **Error if not done**: `"Format Image tidak sesuai"` (Status 102)
+
+### 🔸 Database
+
+**Schema Differences for Local vs Railway:**
+- **Local development**: Uses database name `sims_ppob` (`schema.sql`)
+- **Railway deployment**: Uses database name `railway` (`schema-railway.sql`)
+- Must use correct schema file for each environment
+- No automatic database migration system implemented
+
+**Transaction Limitations:**
+- Race condition prevention uses `FOR UPDATE` locks
+- High concurrent transactions may experience delays
+- No distributed transaction support
+
+**Data Constraints:**
+- Balance stored as `DECIMAL(15,2)` - max 13 digits before decimal
+- Invoice numbers use simple timestamp-based generation (potential collision in high-load)
+- No soft delete implementation - records are permanently deleted
+
+### 🔸 Security
+
+**Authentication:**
+- JWT tokens don't have automatic refresh mechanism
+- Tokens expire based on JWT_SECRET configuration
+- No session management or token revocation list
+- No rate limiting implemented (vulnerable to brute force)
+
+**File Upload:**
+- Image validation only checks MIME type (can be spoofed)
+- No virus/malware scanning on uploaded files
+- Max file size: 5MB (hardcoded, not configurable)
+- Uploaded files stored locally (not cloud storage)
+
+**Password:**
+- Minimum 8 characters required
+- No complexity requirements (uppercase, numbers, special chars)
+- No password history tracking
+- No account lockout after failed attempts
+
+### 🔸 Performance
+
+**Query Optimization:**
+- No caching layer implemented (Redis/Memcached)
+- All queries hit database directly
+- No query result pagination on some endpoints
+- Connection pooling limited to 10 connections
+
+**File Storage:**
+- Profile images stored on local filesystem
+- No CDN integration
+- Images served directly by Node.js (not optimized)
+- No image optimization/compression
+
+**Scalability:**
+- Single-instance application (no load balancing)
+- File uploads won't sync across multiple instances
+- No distributed session management
+
+### 🔸 API Design
+
+**Pagination:**
+- Transaction history pagination exists but optional
+- No pagination on services/banners endpoints
+- Default limits may return large datasets
+
+**Error Messages:**
+- Some error messages in Indonesian (not internationalized)
+- Error codes not fully standardized across all endpoints
+- Stack traces may leak in development mode
+
+**Validation:**
+- Email format validation is basic
+- No phone number validation (not required in spec)
+- Date format validation minimal
+
+### 🔸 Testing
+
+**Automated Tests:**
+- No unit tests implemented
+- No integration tests
+- Only Postman collection for manual/automated testing
+- No CI/CD pipeline with automated testing
+
+**Test Coverage:**
+- Postman tests cover happy path scenarios
+- Limited negative test cases
+- No load/stress testing implemented
+- No security testing (penetration testing)
+
+### 🔸 Deployment
+
+**Environment-Specific Issues:**
+- Hardcoded localhost references in some documentation
+- Railway environment variables must be manually configured
+- No automated deployment script
+- No health check endpoint for monitoring
+
+**Database Migration:**
+- No migration versioning system
+- Schema changes require manual SQL execution
+- No rollback mechanism for failed migrations
+
+### 🔸 Monitoring & Logging
+
+**Logging:**
+- Basic console.log only
+- No structured logging (JSON format)
+- No log aggregation service integration
+- No log rotation mechanism
+
+**Monitoring:**
+- No application performance monitoring (APM)
+- No error tracking service (e.g., Sentry)
+- No metrics collection (response times, error rates)
+- No uptime monitoring
+
+### 🔸 Documentation
+
+**API Documentation:**
+- Swagger UI available but may not reflect all edge cases
+- Some error responses not fully documented
+- No versioning strategy documented
+- Example requests may need manual updates
+
+**Code Documentation:**
+- Minimal inline comments
+- No JSDoc for all functions
+- Architecture decisions not documented
+- No developer onboarding guide
+
+### 🔸 Feature Gaps
+
+**Missing Features (Out of Spec):**
+- No email verification system
+- No forgot password functionality
+- No two-factor authentication (2FA)
+- No user roles/permissions system
+- No transaction cancellation/refund
+- No notification system (email/SMS)
+- No audit log for sensitive operations
+- No data export functionality
+
+### 📝 Mitigation Recommendations
+
+For production deployment, consider:
+1. ✅ Implement Redis caching layer
+2. ✅ Add rate limiting middleware
+3. ✅ Use cloud storage (AWS S3, Cloudinary) for images
+4. ✅ Implement proper logging (Winston, Pino)
+5. ✅ Add health check endpoints
+6. ✅ Implement database migration tool (Knex, Sequelize migrations)
+7. ✅ Add comprehensive unit and integration tests
+8. ✅ Set up error tracking (Sentry, Rollbar)
+9. ✅ Implement API versioning
+10. ✅ Add request validation middleware enhancements
 
 ---
 

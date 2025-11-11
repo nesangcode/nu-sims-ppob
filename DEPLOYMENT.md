@@ -126,7 +126,14 @@ Di Railway dashboard:
 NODE_ENV=production
 JWT_SECRET=<generate-random-secret-key>
 PORT=3000
+APP_URL=https://your-app-name.up.railway.app
 ```
+
+**Important Variables:**
+- `NODE_ENV` - Set to "production" for production deployment
+- `JWT_SECRET` - Generate a secure random key (min 32 characters)
+- `PORT` - Railway uses 3000 by default
+- `APP_URL` - **Your Railway deployment URL** (enables production server in Swagger docs)
 
 **Note:** Database variables (DB_HOST, DB_USER, dll) sudah otomatis tersedia jika Anda menggunakan Railway MySQL.
 
@@ -138,6 +145,20 @@ Jika menggunakan MySQL dari Railway, variables berikut sudah auto-inject:
 - `MYSQLDATABASE` → Nama database (default: `railway`)
 
 File `config/database.js` sudah dikonfigurasi untuk menggunakan Railway variables secara otomatis.
+
+**How to get your Railway URL:**
+1. Go to your Railway project
+2. Click on your service
+3. Go to **"Settings"** tab
+4. Under **"Domains"**, you'll see your Railway-generated URL (e.g., `https://nu-sims-ppob-production.up.railway.app`)
+5. Copy this URL and set it as `APP_URL` variable
+
+**Swagger API Docs Behavior:**
+- When `APP_URL` is set to your Railway URL, Swagger will show TWO servers:
+  - `http://localhost:3000` - Local Development Server
+  - `https://your-app.up.railway.app` - Production Server (Railway)
+- Users can switch between servers using the dropdown in Swagger UI
+- This allows testing against both local and production environments
 
 #### 7. Deploy Ulang (jika perlu)
 

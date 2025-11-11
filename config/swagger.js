@@ -1,5 +1,26 @@
 const swaggerJsdoc = require('swagger-jsdoc');
 
+// Get APP_URL from environment or use default
+const appUrl = process.env.APP_URL || 'http://localhost:3000';
+const nodeEnv = process.env.NODE_ENV || 'development';
+
+// Build servers array dynamically
+const servers = [];
+
+// Always add local development server for testing
+servers.push({
+  url: 'http://localhost:3000',
+  description: 'Local Development Server'
+});
+
+// Add production/staging server if APP_URL is set and different from localhost
+if (appUrl !== 'http://localhost:3000' && appUrl !== 'http://127.0.0.1:3000') {
+  servers.push({
+    url: appUrl,
+    description: nodeEnv === 'production' ? 'Production Server (Railway)' : 'Staging Server'
+  });
+}
+
 const options = {
   definition: {
     openapi: '3.0.0',
@@ -12,16 +33,7 @@ const options = {
         email: 'support@example.com'
       }
     },
-    servers: [
-      {
-        url: 'http://localhost:3000',
-        description: 'Development server'
-      },
-      {
-        url: 'https://your-production-url.com',
-        description: 'Production server'
-      }
-    ],
+    servers: servers,
     components: {
       securitySchemes: {
         bearerAuth: {

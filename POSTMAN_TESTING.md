@@ -40,6 +40,8 @@ Panduan lengkap untuk menggunakan Postman Collection SIMS PPOB API dengan fitur 
    (atau ganti dengan URL deployment jika di server)
 ```
 
+**⚠️ Important:** Untuk testing **Update Profile Image** endpoint, Anda perlu **manually select file** `testphoto.jpg` di Postman (lihat detail di Test Coverage section). File tidak bisa auto-attach karena limitasi Postman.
+
 ### 3. Run Individual Request
 
 **Manual Testing:**
@@ -120,11 +122,30 @@ pm.collectionVariables.set("test_email", testEmail);
 - ✅ Updated data matches request (first_name, last_name)
 
 #### 5. Update Profile Image
+**⚠️ REQUIRED SETUP - Must Select File Manually:**
+
+Postman requires you to manually select the file before running this request:
+
+1. **Open "Update Profile Image" request in Postman**
+2. **Go to "Body" tab → "form-data"**
+3. **Click "Select Files" button next to the `file` key**
+4. **Navigate to repository root:** `nu-sims-ppob/`
+5. **Select `testphoto.jpg`**
+6. **Now you can send the request**
+
+**Allowed Formats:**
+- JPEG/JPG
+- PNG
+- Max size: 5MB
+
 **Tests:**
 - ✅ Status code is 200
 - ✅ Response has correct structure
 - ✅ Profile image updated successfully
 - ✅ Profile image URL is not null
+
+**Common Error:** 
+If you get `"Format Image tidak sesuai"` error, it means the file wasn't selected properly. Make sure to follow the steps above.
 
 ### Module 2: Information (2 endpoints)
 
@@ -199,7 +220,7 @@ pm.collectionVariables.set("test_email", testEmail);
    ↓
 4. Update Profile (test profile updates)
    ↓
-5. Update Profile Image (optional - requires file upload)
+5. Update Profile Image (⚠️ MANUAL: Select testphoto.jpg file first!)
    ↓
 6. Get Banners (no auth required - test info module)
    ↓
@@ -332,6 +353,29 @@ Transaction completed: INV20231105-001
 - Validate API sudah running
 - Ensure database sudah setup
 - Check console untuk error messages
+
+### Image Upload Error: "Format Image tidak sesuai" (Status 102)
+**Symptoms:** Getting error when uploading profile image
+**Causes:**
+1. **File not selected** - Most common cause
+2. **Wrong file format** - Only JPEG/JPG/PNG allowed
+3. **File too large** - Max 5MB
+
+**Solution:**
+```bash
+1. Open "Update Profile Image" request
+2. Go to Body → form-data tab
+3. Look for "file" key
+4. Click "Select Files" button
+5. Navigate to: nu-sims-ppob/testphoto.jpg
+6. Select the file
+7. Verify file is shown in Postman
+8. Send request
+```
+
+**Verify File Selected:**
+- After selecting, you should see the filename next to the "Select Files" button
+- If you see "No file selected", repeat the selection process
 
 ## 🚀 Advanced Usage
 

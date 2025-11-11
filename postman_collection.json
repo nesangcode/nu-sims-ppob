@@ -300,7 +300,7 @@
                 {
                   "key": "file",
                   "type": "file",
-                  "src": ""
+                  "src": []
                 }
               ]
             },
