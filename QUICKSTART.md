@@ -134,11 +134,40 @@ curl -X GET http://localhost:3000/profile \
 
 ### Test dengan Postman
 
-1. Import file `postman_collection.json`
-2. Set variable `base_url` = `http://localhost:3000`
-3. Jalankan "Login" request
-4. Token akan otomatis tersimpan
-5. Test endpoint lainnya
+**Automated Testing dengan Random Email:**
+
+1. **Import Collection:**
+   - Buka Postman
+   - Import file `postman_collection.json`
+
+2. **Configure Base URL:**
+   - Klik collection "SIMS PPOB API"
+   - Tab "Variables"
+   - Set `base_url` = `http://localhost:3000`
+
+3. **Run Complete Test Suite:**
+   - Collection akan otomatis generate random email setiap kali dijalankan
+   - Bisa dijalankan berkali-kali tanpa conflict
+   - Token otomatis tersimpan dan digunakan untuk request berikutnya
+
+4. **Testing Flow:**
+   - Registration → otomatis generate email random (contoh: `user1699123456789@nutech-integrasi.com`)
+   - Login → menggunakan email yang sama dari registration
+   - Get Profile → verifikasi data user yang baru dibuat
+   - Get Balance → cek saldo awal
+   - Top Up → tambah saldo
+   - Transaction → lakukan transaksi
+   - History → cek riwayat transaksi
+
+5. **View Test Results:**
+   - Setiap request memiliki automated test
+   - Cek tab "Test Results" untuk melihat pass/fail
+   - Console akan menampilkan informasi seperti email yang di-generate dan token
+
+**Tips:**
+- Jalankan Collection Runner untuk test semua endpoint sekaligus
+- Test assertions sudah built-in untuk verifikasi response
+- Tidak perlu manual mengubah email, sudah otomatis random
 
 ## Quick Test Flow
 

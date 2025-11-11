@@ -53,9 +53,17 @@ git push -u origin main
 
 #### 5. Import Database Schema
 
-Ada 2 cara untuk import schema:
+**PENTING:** Railway menggunakan database bernama `railway` by default, gunakan file `schema-railway.sql`
 
-**Cara 1: Menggunakan Railway CLI**
+**Cara 1: Menggunakan Railway Plugin (Tercepat!)**
+
+1. Di Railway Dashboard, klik MySQL database service Anda
+2. Klik tab **"Data"**
+3. Klik **"Query"** tab
+4. Copy-paste isi file `database/schema-railway.sql`
+5. Klik **"Run Query"**
+
+**Cara 2: Menggunakan Railway CLI**
 
 ```bash
 # Install Railway CLI
@@ -64,24 +72,46 @@ npm install -g @railway/cli
 # Login
 railway login
 
-# Link ke project
+# Link ke project (jalankan di root folder project)
 railway link
 
-# Connect ke database
-railway connect mysql
-
-# Import schema
-mysql -u <user> -p<password> -h <host> -P <port> <database> < database/schema.sql
+# Connect ke database dan import
+railway run mysql -u root -p < database/schema-railway.sql
 ```
 
-**Cara 2: Menggunakan MySQL Client**
+**Cara 3: Menggunakan MySQL Workbench / Client**
+
+1. Dapatkan credentials dari Railway:
+   - Host: Lihat di Variables tab (MYSQLHOST)
+   - Port: Lihat di Variables tab (MYSQLPORT)
+   - User: Lihat di Variables tab (MYSQLUSER)
+   - Password: Lihat di Variables tab (MYSQLPASSWORD)
+   - Database: `railway`
+
+2. Connect dengan MySQL Workbench
+3. File → Run SQL Script
+4. Pilih file `database/schema-railway.sql`
+5. Execute
+
+**Cara 4: Menggunakan MySQL CLI**
 
 ```bash
-# Connect dengan kredensial dari Railway
-mysql -u root -p<password> -h <host> -P <port> -D railway
+# Ganti <MYSQLHOST>, <MYSQLPORT>, <MYSQLUSER>, <MYSQLPASSWORD> dengan values dari Railway
+mysql -h <MYSQLHOST> -P <MYSQLPORT> -u <MYSQLUSER> -p<MYSQLPASSWORD> railway < database/schema-railway.sql
+```
 
-# Import schema
-source database/schema.sql
+**Verifikasi Schema:**
+
+Connect ke database dan check tables:
+```sql
+SHOW TABLES;
+-- Harus menampilkan: users, balances, services, banners, transactions
+
+SELECT COUNT(*) FROM services;
+-- Harus menampilkan: 12 (jumlah services)
+
+SELECT COUNT(*) FROM banners;
+-- Harus menampilkan: 6 (jumlah banners)
 ```
 
 #### 6. Setup Environment Variables
@@ -101,26 +131,13 @@ PORT=3000
 **Note:** Database variables (DB_HOST, DB_USER, dll) sudah otomatis tersedia jika Anda menggunakan Railway MySQL.
 
 Jika menggunakan MySQL dari Railway, variables berikut sudah auto-inject:
-- `MYSQLHOST`
-- `MYSQLPORT`
-- `MYSQLUSER`
-- `MYSQLPASSWORD`
-- `MYSQLDATABASE`
+- `MYSQLHOST` → Host database
+- `MYSQLPORT` → Port database  
+- `MYSQLUSER` → Username database
+- `MYSQLPASSWORD` → Password database
+- `MYSQLDATABASE` → Nama database (default: `railway`)
 
-Update `config/database.js` untuk menggunakan variables Railway:
-
-```javascript
-const pool = mysql.createPool({
-  host: process.env.MYSQLHOST || process.env.DB_HOST || 'localhost',
-  port: process.env.MYSQLPORT || 3306,
-  user: process.env.MYSQLUSER || process.env.DB_USER || 'root',
-  password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || '',
-  database: process.env.MYSQLDATABASE || process.env.DB_NAME || 'sims_ppob',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
-```
+File `config/database.js` sudah dikonfigurasi untuk menggunakan Railway variables secara otomatis.
 
 #### 7. Deploy Ulang (jika perlu)
 

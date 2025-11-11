@@ -576,10 +576,32 @@ Railway adalah platform yang sangat mudah untuk deploy Node.js API.
 
 ## Testing API
 
-Gunakan tools seperti:
-- **Postman**: Import collection dari API documentation
+### Postman Collection (Recommended)
+
+**🎉 Automated Testing dengan Random Email Generation!**
+
+Collection Postman sudah dilengkapi dengan:
+- ✅ **100% Test Coverage** - Semua 12 endpoints memiliki automated tests
+- ✅ Random email generation - bisa run berkali-kali tanpa conflict
+- ✅ Automated token management
+- ✅ Comprehensive test assertions untuk validasi response
+- ✅ Balance tracking dan state management otomatis
+
+**Quick Start:**
+```bash
+1. Import postman_collection.json ke Postman
+2. Set base_url = http://localhost:3000
+3. Run collection - email otomatis di-generate
+4. Lihat test results di Test Results tab
+```
+
+📖 **Panduan lengkap:** [POSTMAN_TESTING.md](./POSTMAN_TESTING.md)
+
+### Alternative Testing Tools
+
 - **Thunder Client**: VSCode extension
 - **cURL**: Command line
+- **Swagger UI**: Interactive API documentation
 
 ### Contoh Testing dengan cURL:
 

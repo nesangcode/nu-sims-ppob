@@ -14,6 +14,21 @@
       "key": "token",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "test_email",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "test_password",
+      "value": "abcdef1234",
+      "type": "string"
+    },
+    {
+      "key": "current_balance",
+      "value": "0",
+      "type": "number"
     }
   ],
   "item": [
@@ -22,37 +37,43 @@
       "item": [
         {
           "name": "Registration",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"user@nutech-integrasi.com\",\n  \"first_name\": \"User\",\n  \"last_name\": \"Nutech\",\n  \"password\": \"abcdef1234\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/registration",
-              "host": ["{{base_url}}"],
-              "path": ["registration"]
-            }
-          }
-        },
-        {
-          "name": "Login",
           "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Generate random email for testing",
+                  "const timestamp = Date.now();",
+                  "const randomNum = Math.floor(Math.random() * 10000);",
+                  "const testEmail = `user${timestamp}${randomNum}@nutech-integrasi.com`;",
+                  "pm.collectionVariables.set(\"test_email\", testEmail);",
+                  "console.log(\"Generated test email:\", testEmail);"
+                ],
+                "type": "text/javascript"
+              }
+            },
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "var jsonData = pm.response.json();",
-                  "if (jsonData.data && jsonData.data.token) {",
-                  "    pm.collectionVariables.set(\"token\", jsonData.data.token);",
-                  "    console.log(\"Token saved:\", jsonData.data.token);",
-                  "}"
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('data');",
+                  "});",
+                  "",
+                  "pm.test(\"Registration successful\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal(0);",
+                  "    pm.expect(jsonData.message).to.equal('Registrasi berhasil silahkan login');",
+                  "});",
+                  "",
+                  "console.log(\"Registration completed for:\", pm.collectionVariables.get(\"test_email\"));"
                 ],
                 "type": "text/javascript"
               }
@@ -68,7 +89,65 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"user@nutech-integrasi.com\",\n  \"password\": \"abcdef1234\"\n}"
+              "raw": "{\n  \"email\": \"{{test_email}}\",\n  \"first_name\": \"User\",\n  \"last_name\": \"Nutech\",\n  \"password\": \"{{test_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/registration",
+              "host": ["{{base_url}}"],
+              "path": ["registration"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('data');",
+                  "});",
+                  "",
+                  "pm.test(\"Login successful and token received\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal(0);",
+                  "    pm.expect(jsonData.message).to.equal('Login Sukses');",
+                  "    pm.expect(jsonData.data).to.have.property('token');",
+                  "    pm.expect(jsonData.data.token).to.not.be.empty;",
+                  "});",
+                  "",
+                  "// Save token for subsequent requests",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set(\"token\", jsonData.data.token);",
+                  "    console.log(\"Token saved:\", jsonData.data.token);",
+                  "}",
+                  "",
+                  "console.log(\"Logged in as:\", pm.collectionVariables.get(\"test_email\"));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{test_email}}\",\n  \"password\": \"{{test_password}}\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/login",
@@ -79,6 +158,28 @@
         },
         {
           "name": "Get Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Profile data retrieved successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal(0);",
+                  "    pm.expect(jsonData.data).to.have.property('email');",
+                  "    pm.expect(jsonData.data).to.have.property('first_name');",
+                  "    pm.expect(jsonData.data).to.have.property('last_name');",
+                  "    pm.expect(jsonData.data.email).to.equal(pm.collectionVariables.get(\"test_email\"));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -96,6 +197,39 @@
         },
         {
           "name": "Update Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('data');",
+                  "});",
+                  "",
+                  "pm.test(\"Profile updated successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal(0);",
+                  "    pm.expect(jsonData.message).to.equal('Update Profile berhasil');",
+                  "    pm.expect(jsonData.data).to.have.property('email');",
+                  "    pm.expect(jsonData.data).to.have.property('first_name');",
+                  "    pm.expect(jsonData.data).to.have.property('last_name');",
+                  "    pm.expect(jsonData.data.first_name).to.equal('User Updated');",
+                  "    pm.expect(jsonData.data.last_name).to.equal('Nutech Updated');",
+                  "});",
+                  "",
+                  "console.log(\"Profile updated for:\", pm.collectionVariables.get(\"test_email\"));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
             "header": [
@@ -121,6 +255,37 @@
         },
         {
           "name": "Update Profile Image",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('data');",
+                  "});",
+                  "",
+                  "pm.test(\"Profile image updated successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal(0);",
+                  "    pm.expect(jsonData.message).to.equal('Update Profile Image berhasil');",
+                  "    pm.expect(jsonData.data).to.have.property('email');",
+                  "    pm.expect(jsonData.data).to.have.property('profile_image');",
+                  "    pm.expect(jsonData.data.profile_image).to.not.be.null;",
+                  "});",
+                  "",
+                  "console.log(\"Profile image updated\");"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
             "header": [
@@ -153,6 +318,47 @@
       "item": [
         {
           "name": "Get Banners",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('data');",
+                  "});",
+                  "",
+                  "pm.test(\"Banners retrieved successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal(0);",
+                  "    pm.expect(jsonData.message).to.equal('Sukses');",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.data.length).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Banner has required fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.length > 0) {",
+                  "        var banner = jsonData.data[0];",
+                  "        pm.expect(banner).to.have.property('banner_name');",
+                  "        pm.expect(banner).to.have.property('banner_image');",
+                  "        pm.expect(banner).to.have.property('description');",
+                  "    }",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "console.log(\"Total banners:\", jsonData.data.length);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -165,6 +371,48 @@
         },
         {
           "name": "Get Services",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('data');",
+                  "});",
+                  "",
+                  "pm.test(\"Services retrieved successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal(0);",
+                  "    pm.expect(jsonData.message).to.equal('Sukses');",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "    pm.expect(jsonData.data.length).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Service has required fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.length > 0) {",
+                  "        var service = jsonData.data[0];",
+                  "        pm.expect(service).to.have.property('service_code');",
+                  "        pm.expect(service).to.have.property('service_name');",
+                  "        pm.expect(service).to.have.property('service_icon');",
+                  "        pm.expect(service).to.have.property('service_tariff');",
+                  "    }",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "console.log(\"Total services:\", jsonData.data.length);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -187,6 +435,33 @@
       "item": [
         {
           "name": "Get Balance",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Balance retrieved successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal(0);",
+                  "    pm.expect(jsonData.data).to.have.property('balance');",
+                  "    pm.expect(jsonData.data.balance).to.be.a('number');",
+                  "});",
+                  "",
+                  "// Save balance for reference",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.balance !== undefined) {",
+                  "    pm.collectionVariables.set(\"current_balance\", jsonData.data.balance);",
+                  "    console.log(\"Current balance:\", jsonData.data.balance);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -204,6 +479,33 @@
         },
         {
           "name": "Top Up",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Top up successful\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal(0);",
+                  "    pm.expect(jsonData.message).to.equal('Top Up Balance berhasil');",
+                  "    pm.expect(jsonData.data).to.have.property('balance');",
+                  "});",
+                  "",
+                  "pm.test(\"Balance increased\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var previousBalance = pm.collectionVariables.get(\"current_balance\") || 0;",
+                  "    pm.expect(jsonData.data.balance).to.be.above(previousBalance);",
+                  "    console.log(\"New balance:\", jsonData.data.balance);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -229,6 +531,31 @@
         },
         {
           "name": "Transaction",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Transaction successful\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal(0);",
+                  "    pm.expect(jsonData.message).to.equal('Transaksi berhasil');",
+                  "    pm.expect(jsonData.data).to.have.property('invoice_number');",
+                  "    pm.expect(jsonData.data).to.have.property('service_code');",
+                  "    pm.expect(jsonData.data).to.have.property('total_amount');",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "console.log(\"Transaction completed:\", jsonData.data.invoice_number);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -254,6 +581,56 @@
         },
         {
           "name": "Transaction History",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('data');",
+                  "});",
+                  "",
+                  "pm.test(\"Transaction history retrieved successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal(0);",
+                  "    pm.expect(jsonData.message).to.equal('Get History Berhasil');",
+                  "    pm.expect(jsonData.data).to.have.property('offset');",
+                  "    pm.expect(jsonData.data).to.have.property('limit');",
+                  "    pm.expect(jsonData.data).to.have.property('records');",
+                  "    pm.expect(jsonData.data.records).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Transaction record has required fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data.records && jsonData.data.records.length > 0) {",
+                  "        var transaction = jsonData.data.records[0];",
+                  "        pm.expect(transaction).to.have.property('invoice_number');",
+                  "        pm.expect(transaction).to.have.property('transaction_type');",
+                  "        pm.expect(transaction).to.have.property('total_amount');",
+                  "        pm.expect(transaction).to.have.property('created_on');",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"Pagination parameters correct\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.data.offset).to.equal(0);",
+                  "    pm.expect(jsonData.data.limit).to.equal(3);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "console.log(\"Transactions in page:\", jsonData.data.records.length);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
@@ -281,6 +658,50 @@
         },
         {
           "name": "Transaction History (All)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('data');",
+                  "});",
+                  "",
+                  "pm.test(\"All transaction history retrieved successfully\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.equal(0);",
+                  "    pm.expect(jsonData.message).to.equal('Get History Berhasil');",
+                  "    pm.expect(jsonData.data).to.have.property('offset');",
+                  "    pm.expect(jsonData.data).to.have.property('limit');",
+                  "    pm.expect(jsonData.data).to.have.property('records');",
+                  "    pm.expect(jsonData.data.records).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Transaction record has required fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data.records && jsonData.data.records.length > 0) {",
+                  "        var transaction = jsonData.data.records[0];",
+                  "        pm.expect(transaction).to.have.property('invoice_number');",
+                  "        pm.expect(transaction).to.have.property('transaction_type');",
+                  "        pm.expect(transaction).to.have.property('total_amount');",
+                  "        pm.expect(transaction).to.have.property('created_on');",
+                  "    }",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "console.log(\"Total transactions:\", jsonData.data.records.length);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
